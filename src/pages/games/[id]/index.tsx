@@ -1,7 +1,23 @@
 import React from 'react'
+import { Route, Switch } from 'react-router-dom'
+
+import Score from './score'
+import Lobby from './lobby'
 
 export default function Game() {
   return (
-    <div> hello game</div>
+    <Switch>
+      <Route path='/games/:id/score'>
+        <Score />
+      </Route>
+
+      <Route path='/games/:id/lobby'>
+        <Lobby />
+      </Route>
+
+      <Route path='/games/:id'>
+        <div>hello game</div>
+      </Route>
+    </Switch>
   )
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default function Game() {
+export default function Score() {
   return (
-    <div> hello game</div>
+    <div> hello score</div>
   )
 }
