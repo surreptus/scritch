@@ -7,7 +7,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDjKUdCRvNXalqrt1IUoHvZc_AYIMwawGc",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: "scritch-4e385.firebaseapp.com",
   databaseURL: "https://scritch-4e385-default-rtdb.firebaseio.com",
   projectId: "scritch-4e385",
