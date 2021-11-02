@@ -1,35 +1,35 @@
 import React from 'react'
-import { Form, Field, FieldProps, Formik } from 'formik'
-import { Container, Heading, Input, Button } from '@chakra-ui/react'
-
-interface FormValues {
-  name: string;
-}
-
-const INITIAL_VALUES: FormValues = {
-  name: ''
-}
+import { Link } from 'react-router-dom'
+import { Container,
+  Stack,
+  Heading,
+  Text,
+  Button,
+  ButtonGroup
+} from '@chakra-ui/react'
 
 export default function Home () {
-  const handleSubmit = () => {}
-
   return (
     <Container>
-      <Heading>
-        Scritch
-      </Heading>
+      <Stack direction='column' height='100vh' justifyContent='center'>
+        <Heading>
+          Welcome to Scritch
+        </Heading>
 
-      <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}> 
-        <Form>
-          <Field name='name'>
-            {({ field }: FieldProps) => <Input {...field} />}
-          </Field>
+        <Text>
+          Bet against your friends for how many hands you can win.
+        </Text>
 
-          <Button type='submit'>
-            Submit
+        <ButtonGroup>
+          <Button as={Link} to='/games/create' colorScheme='green' size='lg'>
+            Create Game
           </Button>
-        </Form>
-      </Formik>
+
+          <Button as={Link} to='games/join' size='lg'>
+            Join Game
+          </Button>
+        </ButtonGroup>
+      </Stack>
     </Container>
   )
 }

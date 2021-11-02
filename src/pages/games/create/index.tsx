@@ -1,0 +1,40 @@
+import React from 'react'
+import { Form, Field, FieldProps, Formik } from 'formik'
+import { Text, Container, Heading, Input, Button } from '@chakra-ui/react'
+
+interface FormValues {
+  name: string;
+}
+
+const INITIAL_VALUES: FormValues = {
+  name: ''
+}
+
+export default function Create () {
+  const handleSubmit = () => {}
+
+  return (
+    <Container>
+      <Heading>
+       Create Game
+      </Heading>
+
+      <Text>
+        Enter your name and we'll create a new game room for you to invite
+        your friends.
+      </Text>
+
+      <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}> 
+        <Form>
+          <Field name='name'>
+            {({ field }: FieldProps) => <Input {...field} />}
+          </Field>
+
+          <Button type='submit'>
+            Submit
+          </Button>
+        </Form>
+      </Formik>
+    </Container>
+  )
+}
