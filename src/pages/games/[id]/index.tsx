@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom'
 
 import Score from './score'
 import Lobby from './lobby'
+import Play from './play'
 
 export default function Game() {
   return (
@@ -16,7 +17,7 @@ export default function Game() {
       </Route>
 
       <Route path='/games/:id'>
-        <div>hello game</div>
+        <Play />
       </Route>
     </Switch>
   )
