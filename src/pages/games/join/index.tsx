@@ -1,40 +1,46 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
 import { Form, Field, FieldProps, Formik } from 'formik'
-import { Container, Heading, Input, Button } from '@chakra-ui/react'
+import { Stack, Container, Heading, Input, Button } from '@chakra-ui/react'
 
 interface FormValues {
   code: string;
+  name: string;
 }
 
 const INITIAL_VALUES: FormValues = {
-  code: ''
+  code: '',
+  name: ''
 }
 
 export default function Join () {
-  const history = useHistory()
-
   const handleSubmit = ({ code }: FormValues) => {
-    history.push(`${code}`)
   }
 
   return (
     <Container>
-      <Heading>
-        Join Game
-      </Heading>
+      <Stack direction='column' height='100vh' justifyContent='center'>
+        <Heading>
+          Join Game
+        </Heading>
 
-      <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}> 
-        <Form>
-          <Field name='code'>
-            {({ field }: FieldProps) => <Input {...field} />}
-          </Field>
+        <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}> 
+          <Form>
+            <Stack>
+              <Field name='name'>
+                {({ field }: FieldProps) => <Input required placeholder='Your Name' {...field} />}
+              </Field>
 
-          <Button type='submit'>
-            Submit
-          </Button>
-        </Form>
-      </Formik>
+              <Field name='code'>
+                {({ field }: FieldProps) => <Input required placeholder='Game Code' {...field} />}
+              </Field>
+
+              <Button colorScheme='green' type='submit'>
+                Submit
+              </Button>
+            </Stack>
+          </Form>
+        </Formik>
+      </Stack>
     </Container>
   )
 }

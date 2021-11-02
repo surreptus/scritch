@@ -2,19 +2,24 @@ import React from 'react'
 import {
   Container,
   Input,
+  Heading,
   Text,
   List, 
   ListItem,
   FormControl,
   FormHelperText,
   FormLabel,
-  InputGroup,
   Button,
-  InputRightElement
+  InputGroup,
+  Stack,
+  InputRightElement,
+  useToast,
 }  from '@chakra-ui/react'
 
+const CAN_SHARE = typeof navigator.share !== 'undefined'
+
 export default function Lobby() {
-  const canShare = typeof navigator.share !== 'undefined'
+  const toast = useToast()
 
   const players = [
     {
@@ -27,6 +32,15 @@ export default function Lobby() {
     },
   ]
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(window.location.toString())
+
+    toast({
+      title: 'Link Copied!',
+      description: 'You can now paste and share with friends'
+    })
+  }
+
   const handleShare = () => {
     navigator.share({
       title: 'Join my Scritch game',
@@ -34,44 +48,61 @@ export default function Lobby() {
     })
   }
 
-  return (
-    <Container>
-      <FormControl> 
-        <FormLabel> 
-          Game URL:
-        </FormLabel>
-        <InputGroup>
-          <Input
-            value={window.location.toString()}
-            disabled
-            pr="4.5rem"
-          />
+  const renderAction = () => {
+    const action = CAN_SHARE
+      ? handleShare
+      : handleCopy
 
-          {canShare && (
+      const label = CAN_SHARE
+        ? 'Share'
+        : 'Copy'
+      return (
             <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleShare}>
-                Share
+              <Button h="1.75rem" size="sm" onClick={action}>
+                {label}
               </Button>
             </InputRightElement>
-          )}
-        </InputGroup>
+      )
+  }
 
-        <FormHelperText>
-          Copy and share the above URL to allow others to join
-        </FormHelperText>
-      </FormControl>
+  return (
+    <Container>
+      <Stack height='100vh' pt='12'>
+        <Heading>
+          Lobby
+        </Heading>
+        <FormControl> 
+          <FormLabel> 
+            Game URL:
+          </FormLabel>
 
-      <Text>
-        Players
-      </Text>
+          <InputGroup>
+            <Input
+              value={window.location.toString()}
+              disabled
+              pr="4.5rem"
+            />
 
-      <List>
-        {players.map((player) => (
-          <ListItem key={player.id}>
-            {player.name}
-          </ListItem>
-        ))}
-      </List>
+            {renderAction()}
+          </InputGroup>
+
+          <FormHelperText>
+            Copy and share the above URL to allow others to join
+          </FormHelperText>
+        </FormControl>
+
+        <Text>
+          Players
+        </Text>
+
+        <List>
+          {players.map((player) => (
+            <ListItem key={player.id}>
+              {player.name}
+            </ListItem>
+          ))}
+        </List>
+      </Stack>
     </Container>
   )
 }

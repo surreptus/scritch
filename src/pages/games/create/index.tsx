@@ -1,6 +1,6 @@
 import React from 'react'
 import { Form, Field, FieldProps, Formik } from 'formik'
-import { Text, Container, Heading, Input, Button } from '@chakra-ui/react'
+import { Stack, Text, Container, Heading, Input, Button } from '@chakra-ui/react'
 
 interface FormValues {
   name: string;
@@ -15,26 +15,30 @@ export default function Create () {
 
   return (
     <Container>
-      <Heading>
-       Create Game
-      </Heading>
+      <Stack direction='column' height='100vh' justifyContent='center'>
+        <Heading>
+          Create Game
+        </Heading>
 
-      <Text>
-        Enter your name and we'll create a new game room for you to invite
-        your friends.
-      </Text>
+        <Text>
+          Enter your name and we'll create a new game room for you to invite
+          your friends.
+        </Text>
 
-      <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}> 
-        <Form>
-          <Field name='name'>
-            {({ field }: FieldProps) => <Input {...field} />}
-          </Field>
+        <Formik initialValues={INITIAL_VALUES} onSubmit={handleSubmit}> 
+          <Form>
+            <Stack>
+              <Field name='name'>
+                {({ field }: FieldProps) => <Input {...field} />}
+              </Field>
 
-          <Button type='submit'>
-            Submit
-          </Button>
-        </Form>
-      </Formik>
+              <Button type='submit'>
+                Submit
+              </Button>
+            </Stack>
+          </Form>
+        </Formik>
+      </Stack>
     </Container>
   )
 }
