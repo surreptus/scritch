@@ -1,11 +1,29 @@
 import * as functions from "firebase-functions";
+import { initializeApp } from '@firebase/app';
+import * as db from "../db/repository"
 
-console.log(functions)
+const firebaseConfig = {
+  apiKey: "AIzaSyDjKUdCRvNXalqrt1IUoHvZc_AYIMwawGc",
+  authDomain: "scritch-4e385.firebaseapp.com",
+  databaseURL: "https://scritch-4e385.firebaseio.com",
+  projectId: "scritch-4e385",
+  storageBucket: "scritch-4e385.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "1:196355494695:web:fe0ea5f9d9225d2888cf02",
+  measurementId: "G-VJ2Z6B6BVS",
+};
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+initializeApp(firebaseConfig);
+
+export const createGame = functions.https.onCall(async(data) => {
+  const gameId = await db.createGame();
+  const player = await db.createPlayer(data.playerName, data.gameId);
+
+  return {gameId: gameId, player: player};
+});
+
+export const joinGame = functions.https.onCall(async(data) => {
+  const player = await db.createPlayer(data.playerName, data.gameId);
+
+  return {player};
+});
