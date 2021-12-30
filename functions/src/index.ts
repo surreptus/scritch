@@ -1,29 +1,42 @@
 import * as functions from "firebase-functions";
-import { initializeApp } from '@firebase/app';
-import * as db from "../db/repository"
+import express from 'express';
+import { app } from './config/setup'
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDjKUdCRvNXalqrt1IUoHvZc_AYIMwawGc",
-  authDomain: "scritch-4e385.firebaseapp.com",
-  databaseURL: "https://scritch-4e385.firebaseio.com",
-  projectId: "scritch-4e385",
-  storageBucket: "scritch-4e385.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "1:196355494695:web:fe0ea5f9d9225d2888cf02",
-  measurementId: "G-VJ2Z6B6BVS",
-};
+import * as game from './server/game';
 
-initializeApp(firebaseConfig);
+const handleErrorResponse = (res: express.Response, error: Error, message: string) => {
+  res.status(500).send(JSON.stringify({message, error}))
+}
 
-export const createGame = functions.https.onCall(async(data) => {
-  const gameId = await db.createGame();
-  const player = await db.createPlayer(data.playerName, data.gameId);
-
-  return {gameId: gameId, player: player};
+app.post('/games', async(req, res) => {
+  try {
+    const resp = await(game.createGame(req.body.playerName))
+    res.send(JSON.stringify(resp));
+  } catch (e) {
+    console.log("e", e)
+    handleErrorResponse(res, e, 'error creating game')
+  }
 });
 
-export const joinGame = functions.https.onCall(async(data) => {
-  const player = await db.createPlayer(data.playerName, data.gameId);
-
-  return {player};
+app.post('/games/:id/join', async(req, res) => {
+  const { id: gameId } = req.params
+  try {
+    const resp = await(game.joinGame(req.body.playerName, gameId))
+    res.send(JSON.stringify(resp));
+  } catch (e) {
+    handleErrorResponse(res, e, 'error creating player')
+  }
 });
+
+app.post('/games/:id/start', async(req, res) => {
+  const { id: gameId } = req.params
+
+  try {
+    const resp = await(game.startGame(gameId))
+    res.send(JSON.stringify(resp))
+  } catch (e) {
+    handleErrorResponse(res, e, 'error starting game')
+  }
+})
+
+export const api = functions.https.onRequest(app)
