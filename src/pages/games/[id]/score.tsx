@@ -9,20 +9,12 @@ import {
   Tr,
   Td
 } from '@chakra-ui/react'
+import { useScores } from 'contexts/game'
 
 export default function Score() {
-  const players = [
-    {
-      name: 'tony', 
-      score: 10,
-      id: 1
-    },
-    {
-      name: 'john', 
-      score: 210,
-      id: 22 
-    },
-  ]
+  const scores = useScores()
+
+  console.log(scores)
 
   return (
     <Container>
@@ -39,18 +31,18 @@ export default function Score() {
         </Thead>
 
         <Tbody>
-          {players.map((player, index) => (
+          {scores.map(([name, score], index) => (
             <Tr>
               <Td>
                 {index}
               </Td>
 
               <Td>
-                {player.name}
+                {name}
               </Td>
 
               <Td isNumeric>
-                {player.score}
+                {score}
               </Td>
             </Tr>
           ))}

@@ -6,7 +6,7 @@ import './App.css';
 import Home from './pages'
 import Games from './pages/games'
 
-function App() {
+export default function App() {
   return (
     <ChakraProvider>
       <BrowserRouter>
@@ -23,5 +23,3 @@ function App() {
     </ChakraProvider>
   );
 }
-
-export default App;

@@ -1,7 +1,11 @@
 import React from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
 
-export default function Information () {
+interface Props {
+  round: number
+}
+
+export default function Information ({ round }: Props) {
   return (
     <Grid templateColumns='repeat(3, 1fr)'>
       <GridItem>
@@ -9,7 +13,7 @@ export default function Information () {
       </GridItem>
 
       <GridItem align='center'>
-        Round 2
+        Round {round}
       </GridItem>
 
       <GridItem align='right'>
