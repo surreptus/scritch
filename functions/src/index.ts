@@ -5,7 +5,8 @@ import { app } from './config/setup'
 import * as game from './server/game';
 
 const handleErrorResponse = (res: express.Response, error: Error, message: string) => {
-  res.status(500).send(JSON.stringify({message, error}))
+  console.log(error)
+  res.status(500).send(JSON.stringify({message, error: error.message}))
 }
 
 app.post('/games', async(req, res) => {
@@ -13,7 +14,6 @@ app.post('/games', async(req, res) => {
     const resp = await(game.createGame(req.body.playerName))
     res.send(JSON.stringify(resp));
   } catch (e) {
-    console.log("e", e)
     handleErrorResponse(res, e, 'error creating game')
   }
 });
@@ -32,10 +32,34 @@ app.post('/games/:id/start', async(req, res) => {
   const { id: gameId } = req.params
 
   try {
-    const resp = await(game.startGame(gameId))
-    res.send(JSON.stringify(resp))
+    await game.startGame(gameId)
+    res.sendStatus(200)
   } catch (e) {
     handleErrorResponse(res, e, 'error starting game')
+  }
+})
+
+app.post('/games/:gameId/rounds/:roundId/bid', async(req, res) => {
+  const { gameId, roundId } = req.params
+  const { playerId, bid } = req.body
+
+  try {
+    await game.bid(gameId, roundId, playerId, bid)
+    res.sendStatus(200)
+  } catch(e) {
+    handleErrorResponse(res, e, 'error creating bid')
+  }
+})
+
+app.post('/games/:gameId/rounds/:roundId/:trickId/play', async(req, res) => {
+  const { gameId, roundId, trickId } = req.params
+  const { playerId, move } = req.body
+
+  try {
+    await game.play(gameId, roundId, trickId, playerId, move)
+    res.sendStatus(200)
+  } catch(e) {
+    handleErrorResponse(res, e, 'error creating move')
   }
 })
 

@@ -1,43 +1,54 @@
-export type Suit = 'club' | 'heart' | 'diamond' | 'spade';
-export type Trump = Suit | 'none';
+export type Trump = 0 | 1 | 2 | 3 | 4;
+export type Suit = 0 | 1 | 2 | 3;
+
+export type Card = {
+  suit: string;
+  value: string;
+}
 
 export interface Player {
-  key?: string;
   name: string;
-  gameId: string;
+  points: number;
+}
+
+export interface Players {
+  [key:string]: Player;
 }
 
 export interface Game {
-  key?: string;
-  players: Player[];
-  rounds: Round[];
+  players: Players;
+  rounds: Rounds;
+}
+
+export interface Rounds {
+  [key:string]: Round
 }
 
 export interface Round {
   key?: string;
-  index: number;
-  gameId: string;
-  hands: Hand[];
-  bids: Bid[];
-  tricks: Trick[];
+  hands: Hands;
+  bids: Bids;
+  tricks: Tricks;
   numCards: number;
-}
-
-export interface Hand {
-  playerId: string;
-  cards: number[];
-}
-
-export interface Bid {
-  key?: string;
-  playerId: string;
-  bid: number;
-}
-
-export interface Trick {
   trump: Trump;
+  playerOrder: string[];
+}
+
+export interface Hands {
+  [key:string]: number[];
+}
+
+export interface Bids {
+  [key:string]: number;
+}
+
+export interface Tricks {
+  [key:string]: Trick;
+}
+export interface Trick {
   moves: Move[];
-  startPlayer: string;
+  playerOrder: string[];
+  winner?: string;
 }
 
 export interface Move {

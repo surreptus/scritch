@@ -4,10 +4,15 @@ import { Route, Switch } from 'react-router-dom'
 import Game from './[id]'
 import Join from './join'
 import Create from './create'
+import ApiTest from './api-test'
 
 export default function Games () {
   return (
     <Switch>
+      <Route path='/games/api-test'>
+        <ApiTest />
+      </Route>
+
       <Route path='/games/join'>
         <Join />
       </Route>
