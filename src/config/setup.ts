@@ -1,6 +1,7 @@
 import {initializeApp} from '@firebase/app';
 import { getAnalytics } from "firebase/analytics";
 import reportWebVitals from '../reportWebVitals';
+import { getDatabase, connectDatabaseEmulator } from '@firebase/database';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -16,6 +17,13 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 
 export const analytics = getAnalytics(app);
+
+export const db = getDatabase()
+
+if (process.env.NODE_ENV !== 'production') {
+  // Point to the RTDB emulator running on localhost.
+  connectDatabaseEmulator(db, 'localhost', 9000);
+}
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
