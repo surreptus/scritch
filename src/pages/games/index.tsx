@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
 
-import Game from './[id]'
+import Game from './show'
 import Join from './join'
 import Create from './create'
 import ApiTest from './api-test'
