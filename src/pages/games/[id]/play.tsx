@@ -19,7 +19,7 @@ export default function Play () {
   const { round, currentPlayer } = useGame()
 
   return (
-    <Box bg='whitesmoke'>
+    <Box height='100vh' bg='navy'>
       <Information round={round} />
 
       <Hand cards={CARDS} />

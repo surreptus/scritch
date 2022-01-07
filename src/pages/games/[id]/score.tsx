@@ -34,7 +34,7 @@ export default function Score() {
           {scores.map(([name, score], index) => (
             <Tr>
               <Td>
-                {index}
+                {index + 1}
               </Td>
 
               <Td>

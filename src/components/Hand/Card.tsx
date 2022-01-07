@@ -20,7 +20,7 @@ const COLOR_MAP: ColorMap = {
 
 export default function Card ({ value, suit }: Props) {
   return (
-    <Box height='128px' spacing={0} color={COLOR_MAP[suit]} p='4' width='64px' boxShadow='0 2px 4px 0 rgba(0,0,0,0.16)'>
+    <Box borderRadius='5px' bg='white' height='128px' spacing={0} color={COLOR_MAP[suit]} p='4' width='96px' boxShadow='0 2px 4px 0 rgba(0,0,0,0.16)'>
       <Text>
       {value}
       </Text>

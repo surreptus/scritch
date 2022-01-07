@@ -7,7 +7,7 @@ interface Props {
 
 export default function Information ({ round }: Props) {
   return (
-    <Grid templateColumns='repeat(3, 1fr)'>
+    <Grid color='white' templateColumns='repeat(3, 1fr)'>
       <GridItem>
         Score
       </GridItem>
