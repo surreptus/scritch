@@ -55,3 +55,7 @@ export interface Move {
   playerId: string;
   card: number;
 }
+
+export interface ScoreCount {
+  [key:string]: number
+}

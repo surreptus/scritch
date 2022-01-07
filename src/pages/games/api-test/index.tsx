@@ -3,6 +3,8 @@ import * as data from '../../../data/api'
 import * as listeners from '../../../data/db'
 import * as util from '../../../shared/util'
 
+type ScorePoints = {[key:string]: number}
+
 export default function ApiTest () {
   const [playerName, setPlayerName] = useState('')
   const [bid, setBid] = useState<number | undefined>()
@@ -13,12 +15,6 @@ export default function ApiTest () {
   const currentRound = rounds[rounds.length - 1] || {}
   const hands = currentRound.hands || {}
   const bids = currentRound.bids || {}
-
-  const getPlayerOrder = () => {
-    const indexOfStartPlayer = players.findIndex((player) => player.key === currentRound.startPlayer)
-
-    return [...players.slice(indexOfStartPlayer), ...players.slice(0, indexOfStartPlayer)]
-  }
 
   const playerUpdateCallback = (resp: listeners.Player[]) => {
     setPlayers(resp)
@@ -34,6 +30,26 @@ export default function ApiTest () {
       listeners.readPlayerUpdates(gameId, playerUpdateCallback)
       listeners.readRoundUpdates(gameId, roundUpdateCallback)
     }
+  }
+
+  const handleScoreTrick = async() => {
+    const currentTrick = currentRound.tricks[currentRound.tricks.length - 1]
+    const currentMovesLen = currentTrick.moves.length
+    if (currentMovesLen !== players.length) {
+      console.error('The trick has not finished until all players have played')
+      return
+    }
+
+    return await data.scoreTrick(gameId, currentRound.key, currentTrick.key)
+  }
+
+  const handleScoreRound = async() => {
+    const finishedTricks = currentRound.tricks.filter((round) => !!round.winner)
+    if (finishedTricks.length !== currentRound.numCards) {
+      console.error('The round is not finished until each trick has been scored')
+      return
+    }
+    return await data.scoreRound(gameId, currentRound.key)
   }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -56,10 +72,25 @@ export default function ApiTest () {
       return
     }
 
-    const orderedPlayers = getPlayerOrder();
+    const biddingPlayer = currentRound.playerOrder[currentBidsLen]
+    await data.bid(gameId, currentRound.key, biddingPlayer, bid)
+  }
 
-    const biddingPlayer = orderedPlayers[currentBidsLen]
-    await data.bid(gameId, currentRound.key, biddingPlayer.key, bid)
+  const handleCreateTrick = async() => {
+    await data.startTrick(gameId, currentRound.key)
+  }
+
+  const handlePlayCard = async(player: string, card: number) => {
+    if (!currentRound.tricks.length) {
+      console.error("No tricks, must start trick")
+    }
+
+    const currentTrick = currentRound.tricks[currentRound.tricks.length - 1]
+    await data.play(gameId, currentRound.key, currentTrick.key, player, card)
+  }
+
+  const handleStartNextRound = async() => {
+    await data.startNextRound(gameId)
   }
 
   const handleJoinGame = async() => {
@@ -74,8 +105,31 @@ export default function ApiTest () {
     }
   }
 
+  const tricksWithWinner = currentRound.tricks ? currentRound.tricks.filter((trick) => !!trick.winner) : []
+  const currentRoundFinished = tricksWithWinner.length === currentRound.numCards
+
+  const userPoints = rounds.reduce((totalPoints: ScorePoints, round) => {
+    const totalledRoundPoints: ScorePoints = {}
+    const points = round.points || {}
+    Object.keys(points).forEach((userId) => {
+      const roundPoints = round.points[userId]
+      const currentPoints = totalledRoundPoints[userId]
+      totalledRoundPoints[userId] = currentPoints
+        ? currentPoints + roundPoints
+        : roundPoints
+    })
+    return totalledRoundPoints
+  }, {})
+
+  console.log(rounds)
+
   return (
     <div>
+      {
+        currentRound.bids && Object.keys(currentRound.bids).length === players.length && (
+          <button onClick={handleCreateTrick}>Start Trick</button>
+        )
+      }
       <div>
         <input type='text' onChange={handleInputChange}/>
       </div>
@@ -101,11 +155,16 @@ export default function ApiTest () {
             <li key={player.key}>
               <div>ID: {player.key}</div>
               <div>Name: {player.name}</div>
-              <div>Points: {player.points}</div>
+              <div>Points: {userPoints && userPoints[player.key]}</div>
               <div>
                 Cards: {hands[player.key] && hands[player.key].map((card) => {
                   const {suit, value} = util.identifyCard(card)
-                  return `${value} of ${suit}s`
+                  return (
+                    <div>
+                      <div>{`${value} of ${suit}s`}</div>
+                      <button onClick={() => handlePlayCard(player.key, card)}>PlayCard</button>
+                    </div>
+                  )
                 })}
               </div>
               <div>
@@ -121,15 +180,46 @@ export default function ApiTest () {
         <ul>
           {rounds.map(round => (
             <li>
+              {
+                !round.points && currentRoundFinished && (
+                  <button onClick={handleScoreRound}>Score Round</button>
+                )
+              }
+              {
+                round.points && currentRoundFinished && (
+                  <button onClick={handleStartNextRound}>Start Next Round</button>
+                )
+              }
               <div>ID: {round.key}</div>
               <div>NumCards: {round.numCards}</div>
               <div>Trump: {round.trump}</div>
-              <div>StartPlayer: {round.startPlayer}</div>
+              <div>PlayerOrder: {round.playerOrder}</div>
+              {
+                round.tricks && round.tricks.map(trick => (
+                  <div>
+                    {
+                      trick.moves && trick.moves.map(move => {
+                        const {suit, value} = util.identifyCard(move.card)
+                        return(
+                          <div>{`player: ${move.playerId}, card: ${value} of ${suit}s`}</div>
+                        )
+                      })
+                    }
+                    {
+                      trick.moves && trick.moves.length === players.length && !trick.winner && (
+                        <button onClick={handleScoreTrick}>Score Trick</button>
+                      )
+                    }
+                    {
+                      trick.winner && <div>winner: {trick.winner}</div>
+                    }
+                  </div>
+                ))
+              }
             </li>
           ))}
         </ul>
       </div>
-
     </div>
   )
 }
