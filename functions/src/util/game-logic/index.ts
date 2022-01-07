@@ -1,4 +1,4 @@
-import { Trump, Move } from '../../types'
+import { Trump, Move, Hands } from '../../types'
 
 const trump: Trump[] = [0, 1, 2, 3, 4];
 
@@ -6,7 +6,7 @@ const NUM_CARDS = 52;
 
 const DECK = [...Array(NUM_CARDS).keys()]
 
-export const calculateRounds = (numPlayers: number) =>
+export const getMaxCards = (numPlayers: number) =>
   Math.floor(52 / numPlayers);
 
 type CardCarry = [number[], number[][]]
@@ -35,12 +35,7 @@ export const nextTrump = (lastTrump: Trump): Trump => {
   return tIdx === trump.length - 1 ? trump[0] : trump[tIdx + 1]
 }
 
-export const nextStartPlayer = (lastPlayer: string, playerIds: string[]): string => {
-  const pIdx = playerIds.findIndex(id => id == lastPlayer)
-  return pIdx === playerIds.length - 1 ? playerIds[0] : playerIds[pIdx + 1]
-}
-
-export const getWinner = (trump: number, moves: Move[]) => {
+export const getTrickWinner = (trump: number, moves: Move[]) => {
   const winningMove = moves.reduce((bestMove, currentMove) => {
     if (!bestMove) {
       return currentMove
@@ -114,3 +109,32 @@ export const validateMove = (suitLed: number, move: number, hand: number[]): boo
     return hand.every((card) => getSuit(card) !== suitLed)
   }
 }
+
+export const getPlayerOrder = (playerIds: string[], startPlayer: string) => {
+  const indexOfStartPlayer = playerIds.indexOf(startPlayer)
+
+  return [...playerIds.slice(indexOfStartPlayer), ...playerIds.slice(0, indexOfStartPlayer)]
+}
+
+export const getNextTrump = (lastTrump: Trump, numCards: number): Trump => {
+  let nextTrump = lastTrump + 1;
+
+  // Trump only goes up to 4, also do not allow no trump on hands with 1 trick
+  if (nextTrump > 4 || (numCards === 1 && nextTrump === 4)) {
+    nextTrump = 0
+  }
+
+  return nextTrump as Trump
+}
+
+export const deal = (playerIds: string[], numCards: number): Hands => {
+  const cards = dealCards(playerIds.length, numCards)
+  return cards.reduce((carry, hand, i) => {
+    const playerId = playerIds[i]
+    return {
+      ...carry,
+      [playerId]: hand
+    }
+  }, {})
+}
+

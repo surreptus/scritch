@@ -17,6 +17,7 @@ export type Player = {
   name: string;
   points: number;
 }
+
 export const readPlayerUpdates = (gameId: string, callback: (data: Player[]) => void) => {
   const playersRef = ref(db, `games/${gameId}/players`)
   onValue(playersRef, (snapshot) => {
@@ -40,7 +41,10 @@ export type RoundsData = {
     };
     numCards: number;
     trump: string;
-    startPlayer: string;
+    playerOrder: string[];
+    tricks: {
+      [key:string]: Trick;
+    }
   }
 }
 export type Round = {
@@ -53,17 +57,41 @@ export type Round = {
   };
   numCards: number;
   trump: string;
-  startPlayer: string;
+  playerOrder: string[];
+  tricks: Trick[];
+  points: {
+    [key: string]: number;
+  };
+}
+export type Move = {
+  playerId: string;
+  card: number;
+}
+export type Trick = {
+  playerOrder: string[];
+  moves: Move[];
+  winner: string,
+  key: string,
 }
 
 export const readRoundUpdates = (gameId: string, callback: (data: Round[]) => void) => {
   const roundsRef = ref(db, `games/${gameId}/rounds`)
   onValue(roundsRef, (snapshot) => {
     const data = snapshot.val() || {};
-    const rounds = Object.keys(data).map((key) => ({
-      key,
-      ...data[key],
-    }))
+
+    const rounds = Object.keys(data).map((rId) => {
+      const round = data[rId]
+      const tricks = Object.keys(round.tricks || {}).map((tId) => ({
+        key: tId,
+        ...round.tricks[tId]
+      }))
+
+      return {
+        key: rId,
+        ...round,
+        tricks,
+      }
+    })
     callback(rounds)
   })
 }

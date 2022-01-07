@@ -21,7 +21,8 @@ export const joinGame = async (gameId: string, playerName: string) => {
       headers: {'Content-Type': 'application/json'}
     }
   )
-  console.log(res.json())
+  const response = await res.json()
+  console.log(response)
 }
 
 export const startGame = async (gameId: string) => {
@@ -31,7 +32,8 @@ export const startGame = async (gameId: string) => {
       headers: {'Content-Type': 'application/json'}
     }
   )
-  console.log(res.json())
+  const response = await res.json()
+  console.log(response)
 }
 
 export const bid = async (gameId: string, roundId: string, playerId: string, bid: number) => {
@@ -42,5 +44,62 @@ export const bid = async (gameId: string, roundId: string, playerId: string, bid
       body: JSON.stringify({playerId, bid})
     }
   )
-  console.log(res.json())
+  const response = await res.json()
+  console.log(response)
+}
+
+export const startTrick = async (gameId: string, roundId: string) => {
+  const res = await fetch(`${ROOT_URL}/games/${gameId}/rounds/${roundId}/tricks/create`,
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    }
+  )
+  const response = await res.json()
+  console.log(response)
+}
+
+export const play = async (gameId: string, roundId: string, trickId: string, playerId: string, card: number) => {
+  const res = await fetch(`${ROOT_URL}/games/${gameId}/rounds/${roundId}/tricks/${trickId}/play`,
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({playerId, card})
+    }
+  )
+  const response = await res.json()
+  console.log(response)
+}
+
+export const scoreTrick = async (gameId: string, roundId: string, trickId: string) => {
+  const res = await fetch(`${ROOT_URL}/games/${gameId}/rounds/${roundId}/tricks/${trickId}/score`,
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    }
+  )
+  const response = await res.json()
+  console.log(response)
+}
+
+export const scoreRound = async (gameId: string, roundId: string) => {
+  const res = await fetch(`${ROOT_URL}/games/${gameId}/rounds/${roundId}/score`,
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    }
+  )
+  const response = await res.json()
+  console.log(response)
+}
+
+export const startNextRound = async (gameId: string) => {
+  const res = await fetch(`${ROOT_URL}/games/${gameId}/rounds/create`,
+    {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    }
+  )
+  const response = await res.json()
+  console.log(response)
 }

@@ -13,6 +13,7 @@ import {
   Round,
   Trick,
   Move,
+  ScoreCount
 } from '../types'
 
 import { db } from '../config/setup';
@@ -79,6 +80,17 @@ export const createBid = async (
 ) => {
   const updates = {
     [`games/${gameId}/rounds/${roundId}/bids/${playerId}`]: bid
+  }
+  await update(ref(db), updates)
+}
+
+export const setRoundPoints = async (
+  gameId: string,
+  roundId: string,
+  points: ScoreCount,
+) => {
+  const updates = {
+    [`games/${gameId}/rounds/${roundId}/points`]: points
   }
   await update(ref(db), updates)
 }
