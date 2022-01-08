@@ -1,10 +1,10 @@
 import React from 'react'
 import { Text, Box } from '@chakra-ui/react'
-import { Suit } from 'types'
+import { Suit, Value } from 'types'
 
 interface Props {
-  value: number;
-  suit: string;
+  value: Value;
+  suit: Suit;
 }
 
 interface ColorMap {

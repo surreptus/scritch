@@ -3,26 +3,20 @@ import { Box } from '@chakra-ui/react'
 
 import Hand from 'components/Hand'
 import Information from 'components/Information'
-import { useGame } from 'contexts/game'
+import { useGame, useCurrentHand, useCurrentRound } from 'contexts/game'
+import { useLoggedInUser } from 'contexts/application'
 import { Card } from 'types'
 
-const CARDS: Card[] = [{
-  value: 10,
-  suit: 'spades'
-},
-{
-  value: 5,
-  suit: 'hearts'
-}]
-
 export default function Play () {
-  const { round, currentPlayer } = useGame()
+  const userId = useLoggedInUser()
+  const currentRound = useCurrentRound()
+  const currentHand = useCurrentHand(userId)
 
   return (
     <Box height='100vh' bg='navy'>
-      <Information round={round} />
+      <Information round={currentRound} />
 
-      <Hand cards={CARDS} />
+      <Hand cards={currentHand} />
     </Box>
   )
 }

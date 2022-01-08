@@ -1,31 +1,34 @@
+export {}
+/*
 import React, { useState, ChangeEvent} from 'react'
 import * as data from '../../../data/api'
 import * as listeners from '../../../data/db'
 import * as util from '../../../shared/util'
+import {Round, Player, Trick, Move} from 'types'
 
 type ScorePoints = {[key:string]: number}
 
 export default function ApiTest () {
   const [playerName, setPlayerName] = useState('')
   const [bid, setBid] = useState<number | undefined>()
-  const [players, setPlayers] = useState<listeners.Player[]>([])
+  const [players, setPlayers] = useState<Player[]>([])
   const [gameId, setGameId] = useState('')
-  const [rounds, setRounds] = useState<listeners.Round[]>([])
+  const [rounds, setRounds] = useState<Round[]>([])
 
   const currentRound = rounds[rounds.length - 1] || {}
   const hands = currentRound.hands || {}
   const bids = currentRound.bids || {}
 
-  const playerUpdateCallback = (resp: listeners.Player[]) => {
+  const playerUpdateCallback = (resp: Player[]) => {
     setPlayers(resp)
   }
-  const roundUpdateCallback = (resp: listeners.Round[]) => {
+  const roundUpdateCallback = (resp: Round[]) => {
     setRounds(resp)
   }
 
   const handleCreateGame = async() => {
     if (playerName.trim()) {
-      const gameId = await data.createGame(playerName)
+      const { gameId } = await data.createGame(playerName)
       setGameId(gameId)
       listeners.readPlayerUpdates(gameId, playerUpdateCallback)
       listeners.readRoundUpdates(gameId, roundUpdateCallback)
@@ -33,23 +36,29 @@ export default function ApiTest () {
   }
 
   const handleScoreTrick = async() => {
-    const currentTrick = currentRound.tricks[currentRound.tricks.length - 1]
+    const currentTrick = currentRound.tricks && currentRound.tricks[currentRound.tricks.length - 1]
+    if (!currentTrick || !currentTrick.moves) {
+      return
+    }
     const currentMovesLen = currentTrick.moves.length
     if (currentMovesLen !== players.length) {
       console.error('The trick has not finished until all players have played')
       return
     }
 
-    return await data.scoreTrick(gameId, currentRound.key, currentTrick.key)
+    return await data.scoreTrick(gameId, currentRound.id, currentTrick.id)
   }
 
   const handleScoreRound = async() => {
-    const finishedTricks = currentRound.tricks.filter((round) => !!round.winner)
+    const finishedTricks = currentRound.tricks && currentRound.tricks.filter((round) => !!round.winner)
+    if (!finishedTricks) {
+      return
+    }
     if (finishedTricks.length !== currentRound.numCards) {
       console.error('The round is not finished until each trick has been scored')
       return
     }
-    return await data.scoreRound(gameId, currentRound.key)
+    return await data.scoreRound(gameId, currentRound.id)
   }
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -73,20 +82,20 @@ export default function ApiTest () {
     }
 
     const biddingPlayer = currentRound.playerOrder[currentBidsLen]
-    await data.bid(gameId, currentRound.key, biddingPlayer, bid)
+    await data.bid(gameId, currentRound.id, biddingPlayer, bid)
   }
 
   const handleCreateTrick = async() => {
-    await data.startTrick(gameId, currentRound.key)
+    await data.startTrick(gameId, currentRound.id)
   }
 
   const handlePlayCard = async(player: string, card: number) => {
-    if (!currentRound.tricks.length) {
+    if (!currentRound.tricks || !currentRound.tricks.length) {
       console.error("No tricks, must start trick")
     }
 
-    const currentTrick = currentRound.tricks[currentRound.tricks.length - 1]
-    await data.play(gameId, currentRound.key, currentTrick.key, player, card)
+    const currentTrick = currentRound.tricks && currentRound.tricks[currentRound.tricks.length - 1]
+    await data.play(gameId, currentRound.id, currentTrick.id, player, card)
   }
 
   const handleStartNextRound = async() => {
@@ -112,7 +121,7 @@ export default function ApiTest () {
     const totalledRoundPoints: ScorePoints = {}
     const points = round.points || {}
     Object.keys(points).forEach((userId) => {
-      const roundPoints = round.points[userId]
+      const roundPoints = round.points && round.points[userId]
       const currentPoints = totalledRoundPoints[userId]
       totalledRoundPoints[userId] = currentPoints
         ? currentPoints + roundPoints
@@ -152,23 +161,23 @@ export default function ApiTest () {
         <h1>Players</h1>
         <ul>
           {players.map(player => (
-            <li key={player.key}>
-              <div>ID: {player.key}</div>
+            <li key={player.id}>
+              <div>ID: {player.id}</div>
               <div>Name: {player.name}</div>
-              <div>Points: {userPoints && userPoints[player.key]}</div>
+              <div>Points: {userPoints && userPoints[player.id]}</div>
               <div>
-                Cards: {hands[player.key] && hands[player.key].map((card) => {
+                Cards: {hands[player.id] && hands[player.id].map((card) => {
                   const {suit, value} = util.identifyCard(card)
                   return (
                     <div>
                       <div>{`${value} of ${suit}s`}</div>
-                      <button onClick={() => handlePlayCard(player.key, card)}>PlayCard</button>
+                      <button onClick={() => handlePlayCard(player.id, card)}>PlayCard</button>
                     </div>
                   )
                 })}
               </div>
               <div>
-                Bid: {bids[player.key]}
+                Bid: {bids[player.id]}
               </div>
             </li>
           ))}
@@ -190,7 +199,7 @@ export default function ApiTest () {
                   <button onClick={handleStartNextRound}>Start Next Round</button>
                 )
               }
-              <div>ID: {round.key}</div>
+              <div>ID: {round.id}</div>
               <div>NumCards: {round.numCards}</div>
               <div>Trump: {round.trump}</div>
               <div>PlayerOrder: {round.playerOrder}</div>
@@ -222,4 +231,5 @@ export default function ApiTest () {
       </div>
     </div>
   )
-}
+  }
+*/

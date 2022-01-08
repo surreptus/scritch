@@ -1,10 +1,10 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {
   Container,
   Input,
   Heading,
   Text,
-  List, 
+  List,
   ListItem,
   FormControl,
   FormHelperText,
@@ -15,22 +15,31 @@ import {
   InputRightElement,
   useToast,
 }  from '@chakra-ui/react'
+import {useGame} from 'contexts/game'
+import {useParams, useHistory} from 'react-router-dom'
+import * as api from 'data/api'
+import {useCurrentUserId} from 'contexts/application'
 
 const CAN_SHARE = typeof navigator.share !== 'undefined'
 
 export default function Lobby() {
-  const toast = useToast()
+  const userId = useCurrentUserId()
+  console.log(userId)
 
-  const players = [
-    {
-      name: 'tony',
-      id: 1
-    },
-    {
-      name: 'john',
-      id: 2
-    },
-  ]
+  const toast = useToast()
+  const history = useHistory()
+
+  const {id: gameId} = useParams<{id: string}>()
+
+  const game = useGame()
+  const players = game.players
+
+  const hasGameStarted = game.rounds.length > 0
+  useEffect(() => {
+    if (hasGameStarted) {
+      history.push(`/games/${gameId}`)
+    }
+  }, [hasGameStarted])
 
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.toString())
@@ -46,6 +55,10 @@ export default function Lobby() {
       title: 'Join my Scritch game',
       url: window.location.toString()
     })
+  }
+
+  const handleStartGame = async () => {
+    await api.startGame(gameId)
   }
 
   const renderAction = () => {
@@ -65,21 +78,24 @@ export default function Lobby() {
       )
   }
 
+  const joinLink = `${window.location.hostname}/games/join?code=${gameId}`
+  const canStartGame = players.length >= 3
+
   return (
     <Container>
       <Stack height='100vh' pt='12'>
         <Heading>
           Lobby
         </Heading>
-        <FormControl> 
-          <FormLabel> 
+        <FormControl>
+          <FormLabel>
             Game URL:
           </FormLabel>
 
           <InputGroup>
             <Input
-              value={window.location.toString()}
-              disabled
+              value={joinLink}
+              disablead
               pr="4.5rem"
             />
 
@@ -102,6 +118,8 @@ export default function Lobby() {
             </ListItem>
           ))}
         </List>
+
+        <Button onClick={handleStartGame} disabled={!canStartGame}>Start Game</Button>
       </Stack>
     </Container>
   )

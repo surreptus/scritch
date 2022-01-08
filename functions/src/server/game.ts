@@ -38,6 +38,7 @@ export const joinGame = async (
   playerName: string,
   gameId: string,
 ): Promise<JoinGameResp> => {
+  await db.findGame(gameId);
   const playerData: Player = {
     name: playerName,
     points: 0,

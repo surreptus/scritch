@@ -12,9 +12,7 @@ import {
 import { useScores } from 'contexts/game'
 
 export default function Score() {
-  const scores = useScores()
-
-  console.log(scores)
+  //const scores = []//useScores()
 
   return (
     <Container>
@@ -31,7 +29,7 @@ export default function Score() {
         </Thead>
 
         <Tbody>
-          {scores.map(([name, score], index) => (
+          {/*scores.map(([name, score], index) => (
             <Tr>
               <Td>
                 {index + 1}
@@ -45,7 +43,7 @@ export default function Score() {
                 {score}
               </Td>
             </Tr>
-          ))}
+            ))*/}
         </Tbody>
       </Table>
     </Container>

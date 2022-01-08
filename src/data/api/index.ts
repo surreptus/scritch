@@ -1,6 +1,7 @@
 const ROOT_URL = 'http://localhost:5001/scritch-4e385/us-central1/api'
 
-export const createGame = async (playerName: string) => {
+type CreateGameResp = {gameId: string, playerId: string}
+export const createGame = async (playerName: string): Promise<CreateGameResp> => {
   const res = await fetch(`${ROOT_URL}/games`,
     {
       method: 'POST',
@@ -10,10 +11,11 @@ export const createGame = async (playerName: string) => {
   )
   const json = await res.json()
   console.log(json)
-  return json.gameId;
+  return {gameId: json.gameId, playerId: json.player};
 }
 
-export const joinGame = async (gameId: string, playerName: string) => {
+type JoinGameResp = {playerId: string}
+export const joinGame = async (gameId: string, playerName: string): Promise<JoinGameResp> => {
   const res = await fetch(`${ROOT_URL}/games/${gameId}/join`,
     {
       method: 'POST',
@@ -23,6 +25,7 @@ export const joinGame = async (gameId: string, playerName: string) => {
   )
   const response = await res.json()
   console.log(response)
+  return response
 }
 
 export const startGame = async (gameId: string) => {

@@ -1,24 +1,4 @@
-const SUITS = ['club', 'diamond', 'heart', 'spade'] as const
-const VALUES = [
-  'two',
-  'three',
-  'four',
-  'five',
-  'six',
-  'seven',
-  'eight',
-  'nine',
-  'ten',
-  'jack',
-  'queen',
-  'king',
-  'ace'
-] as const
-
-export type Card = {
-  suit: typeof SUITS[number]
-  value: typeof VALUES[number]
-}
+import { SUITS, VALUES, Card } from 'types'
 
 export const getSuit = (cardNum: number): number => {
   return Math.floor(cardNum/52 * 4)
